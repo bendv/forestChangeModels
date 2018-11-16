@@ -13,8 +13,7 @@ This paper describes an implementation of the `bfastmonitor` method with
 Landsat NDVI time series for tracking small-scale forest disturbances in
 a montane forest in southwestern Ethiopia.
 
-1. Cal/Val data
----------------
+## 1. Cal/Val data
 
 Calibration and validation data were generated using visual
 interpretation of very high resolution (VHR) SPOT5 and RapidEye imagery.
@@ -30,13 +29,6 @@ the VHR time series.
     ref$breakpoint <- factor(ref$breakpoint)
     head(ref)
 
-    ##     magnitude breakpoint change_class
-    ## 1 -0.21648168          1          def
-    ## 2 -0.08737494          1    no_change
-    ## 3 -0.04794242          1    no_change
-    ## 4 -0.09516313          1    no_change
-    ## 5 -0.11814548          1    no_change
-    ## 6 -0.05150574          1    no_change
 
 The `change_class` column contains the change labels assigned during VHR
 image interpretation. The `breakpoint` column indicates whether
@@ -45,8 +37,7 @@ particular pixel. The `magnitude` columns indicates the NDVI change
 magnitude (ie., the median residual) for that pixel within the 1-year
 monitoring period window where the breakpoint was detected.
 
-2. Ordinal Logistic Regression
-------------------------------
+## 2. Ordinal Logistic Regression
 
 Ordinal logistic regression (OLR) was used to test the ability of the
 `bfastmonitor` breakpoint-magnitude indicators to predict deforestation
@@ -72,12 +63,6 @@ Here, we fit four models for testing:
     aic <- AIC(m0, m1, m2, m3)
     print(aic)
 
-    ##    df      AIC
-    ## m0  2 387.2408
-    ## m1  3 309.5814
-    ## m2  4 305.8929
-    ## m3  3 326.5976
-
 Using the Aikaike Information Criterion (AIC), the model that includes
 both breakpoints and magnitude as predictor variables seems to be the
 most suitable of the four models, so we will continue with that model.
@@ -95,14 +80,6 @@ without breakpoints.
     nd2$Pno_change <- P2[, 3]
 
     head(nd2)
-
-    ##    magnitude breakpoint      Pdef      Pdeg Pno_change
-    ## 1 -0.2369534          0 0.6342272 0.1885655  0.1772073
-    ## 2 -0.2362581          0 0.6320212 0.1892450  0.1787338
-    ## 3 -0.2355628          0 0.6298108 0.1899207  0.1802685
-    ## 4 -0.2348675          0 0.6275960 0.1905925  0.1818115
-    ## 5 -0.2341722          0 0.6253771 0.1912602  0.1833627
-    ## 6 -0.2334769          0 0.6231540 0.1919238  0.1849222
 
 The columns `Pdef`, `Pdeg` and `Pno_change` represent the predicted
 class probabilities by our `m2` model. We can plot these to analyze the
@@ -138,5 +115,7 @@ may be due to the spatial resolution of the Landsat data, limitations in
 spectral index used (NDVI), limitations in the temporal resolution of
 the data, or any combination of these or other factors.
 
-3. Binomial Logistic Regression
--------------------------------
+## 3. Binomial Logistic Regression
+
+...coming soon...
+
