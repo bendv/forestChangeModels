@@ -60,9 +60,10 @@ Here, we fit four models for testing:
 - `m2`: magnitude and breakpoints as predictors  
 - `m3`: breakpoints only  
   
-
-    aic <- AIC(m0, m1, m2, m3)
-    print(aic)
+```r
+aic <- AIC(m0, m1, m2, m3)
+print(aic)
+```
 
 Using the Aikaike Information Criterion (AIC), the model that includes
 both breakpoints and magnitude as predictor variables seems to be the
