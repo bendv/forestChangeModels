@@ -24,11 +24,12 @@ sampled pixels were labeled as "deforestation", "degradation" or
 "no-change" depending on the changes to the forest canopy observed in
 the VHR time series.
 
-    ref <- read.csv('data/OLR_refdata.csv', row.names = 1)
-    # convert breakpoints from numeric to factor
-    ref$breakpoint <- factor(ref$breakpoint)
-    head(ref)
-
+```r
+ref <- read.csv('data/OLR_refdata.csv', row.names = 1)
+# convert breakpoints from numeric to factor
+ref$breakpoint <- factor(ref$breakpoint)
+head(ref)
+```
 
 The `change_class` column contains the change labels assigned during VHR
 image interpretation. The `breakpoint` column indicates whether
@@ -48,11 +49,13 @@ variable and several combinations of breakpoints (binary) and magnitude
 (continuous) as predictor variables. OLR's are fit using the `polr()`
 command in the `MASS` library.
 
-    library(MASS)
-    m0 <- polr(change_class ~ 1, data = ref, method = "probit", Hess = TRUE)  # null model
-    m1 <- polr(change_class ~ magnitude, data = ref, method = "probit", Hess = TRUE)
-    m2 <- polr(change_class ~ magnitude + breakpoint, data = ref, method = "probit", Hess = TRUE)
-    m3 <- polr(change_class ~ breakpoint, data = ref, method = "probit", Hess = TRUE)
+```r
+library(MASS)
+m0 <- polr(change_class ~ 1, data = ref, method = "probit", Hess = TRUE)  # null model
+m1 <- polr(change_class ~ magnitude, data = ref, method = "probit", Hess = TRUE)
+m2 <- polr(change_class ~ magnitude + breakpoint, data = ref, method = "probit", Hess = TRUE)
+m3 <- polr(change_class ~ breakpoint, data = ref, method = "probit", Hess = TRUE)
+```
 
 Here, we fit four models for testing:  
 - `m0`: "Null" model (no predictor variables)  
@@ -74,34 +77,38 @@ of the three classes predicted by our model. To do this, we will predict
 the class probabilities over a range of magnitude values with and
 without breakpoints.
 
-    magns <- seq(min(ref$magnitude), max(ref$magnitude), length = 500)
-    nd2 <- data.frame(magnitude = rep(magns, 2), breakpoint = factor(c(rep(0, 500), rep(1, 500)), levels = c(0, 1)))
-    P2 <- predict(m2, newdata = nd2, type = "probs")
-    nd2$Pdef <- P2[, 1]
-    nd2$Pdeg <- P2[, 2]
-    nd2$Pno_change <- P2[, 3]
+```r
+magns <- seq(min(ref$magnitude), max(ref$magnitude), length = 500)
+nd2 <- data.frame(magnitude = rep(magns, 2), breakpoint = factor(c(rep(0, 500), rep(1, 500)), levels = c(0, 1)))
+P2 <- predict(m2, newdata = nd2, type = "probs")
+nd2$Pdef <- P2[, 1]
+nd2$Pdeg <- P2[, 2]
+nd2$Pno_change <- P2[, 3]
 
-    head(nd2)
+head(nd2)
+```
 
 The columns `Pdef`, `Pdeg` and `Pno_change` represent the predicted
 class probabilities by our `m2` model. We can plot these to analyze the
 effects of these predictor variables on the class probabilities.
 
-    library(ggplot2)
-    library(reshape2)
+```r
+library(ggplot2)
+library(reshape2)
 
-    nd2m <- melt(nd2, id.vars = c("magnitude", "breakpoint"))
-    names(nd2m) <- c("magnitude", "breakpoint", "change_class", "P")
+nd2m <- melt(nd2, id.vars = c("magnitude", "breakpoint"))
+names(nd2m) <- c("magnitude", "breakpoint", "change_class", "P")
 
-    p <- ggplot(data = nd2m, aes(x = magnitude, y = P)) +
-      geom_line(aes(col = change_class), size = rel(1.2)) +
-      scale_y_continuous(limits = c(0, 1)) +
-      facet_wrap(~ breakpoint, ncol = 2) +
-      labs(x = "M") +
-      scale_colour_brewer(palette = "Set1") +
-      geom_segment(data = ref, aes(x = magnitude, xend = magnitude), y = 0, yend = 0.01, lwd = 0.5) +
-      theme_bw()
-    p
+p <- ggplot(data = nd2m, aes(x = magnitude, y = P)) +
+  geom_line(aes(col = change_class), size = rel(1.2)) +
+  scale_y_continuous(limits = c(0, 1)) +
+  facet_wrap(~ breakpoint, ncol = 2) +
+  labs(x = "M") +
+  scale_colour_brewer(palette = "Set1") +
+  geom_segment(data = ref, aes(x = magnitude, xend = magnitude), y = 0, yend = 0.01, lwd = 0.5) +
+  theme_bw()
+p
+```
 
 ![](README_files/figure-markdown_strict/OLR_plots-1.png)
 
