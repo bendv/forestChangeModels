@@ -58,7 +58,8 @@ Here, we fit four models for testing:
 - `m0`: "Null" model (no predictor variables)  
 - `m1`: magnitude as a predictor without breakpoints  
 - `m2`: magnitude and breakpoints as predictors  
-- `m3`: breakpoints only
+- `m3`: breakpoints only  
+
 
     aic <- AIC(m0, m1, m2, m3)
     print(aic)
